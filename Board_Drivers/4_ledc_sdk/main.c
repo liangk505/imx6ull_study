@@ -48,9 +48,9 @@ int main()
     while(1)
     {
         LED_OFF();
-        delay(500);
+        delay(1000);
         LED_ON();
-        delay(500);
+        delay(1000);
 
     }
     return 0;
