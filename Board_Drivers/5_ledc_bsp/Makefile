@@ -1,22 +1,57 @@
-CROSS_COMPLIE ?= arm-linux-gnueabihf-
-NAME ?= ledc
-CC := $(CROSS_COMPLIE)gcc
-LD := $(CROSS_COMPLIE)ld 
-OBJCOPY := $(CROSS_COMPLIE)objcopy
-OBJDUMP := $(CROSS_COMPLIE)objdump
+CROSS_COMPILE ?= arm-linux-gnueabihf-
+TARGET ?= ledc
+CC := $(CROSS_COMPILE)gcc
+LD := $(CROSS_COMPILE)ld 
+OBJCOPY := $(CROSS_COMPILE)objcopy 
+OBJDUMP := $(CROSS_COMPILE)objdump 
 
-OBJS := start.o main.o
+INCLUDIRS := imx6u \
+				bsp/clk \
+				bsp/delay \
+				bsp/led 
 
-$(NAME).bin : $(OBJS)
-	$(LD) -Timx6u.lds -o $(NAME).elf $^
-	$(OBJCOPY) -O binary -S $(NAME).elf $@
-	$(OBJDUMP) -D -m arm $(NAME).elf > $(NAME).dis
+SRCDIRS := project \
+			bsp/clk \
+			bsp/led \
+			bsp/delay 
 
-%.o : %.c
-	$(CC) -Wall -nostdlib -c -O2 -o $@ $<
+INCLUDE :=  $(patsubst %, -I %, $(INCLUDIRS))
 
-%.o : %.s
-	$(CC) -Wall -nostdlib -c -O2 -o $@ $<
 
-clean :
-	rm -rf *.o $(NAME).bin $(NAME).elf $(NAME).dis
+SFILES  := $(foreach dir, $(SRCDIRS), $(wildcard $(dir)/*.s))
+CFILES  := $(foreach dir, $(SRCDIRS), $(wildcard $(dir)/*.c))
+
+SFILENDIR := $(notdir $(SFILES))
+CFILENDIR := $(notdir $(CFILES))
+
+SOBJS := $(patsubst %, obj/%, $(SFILENDIR:.s=.o))
+COBJS := $(patsubst %, obj/%, $(CFILENDIR:.c=.o))
+
+OBJS := $(SOBJS) $(COBJS)
+
+VPATH := $(SRCDIRS)
+.PHONY:clean
+
+$(TARGET).bin : $(OBJS)
+	$(LD) -Timx6u.lds -o $(TARGET).elf $^
+	$(OBJCOPY) -O binary -S $(TARGET).elf $@
+	$(OBJDUMP) -D -m arm $(TARGET).elf > $(TARGET).dis
+
+$(SOBJS) : obj/%.o : %.s
+	$(CC) -Wall -nostdlib -c -O2 $(INCLUDE) -o $@ $<
+
+$(COBJS) : obj/%.o : %.c
+	$(CC) -Wall -nostdlib -c -O2 $(INCLUDE) -o $@ $<
+
+clean:
+	rm -rf $(TARGET).elf $(TARGET).bin $(TARGET).dis $(OBJS)
+
+
+print:
+	@echo INCLUDE = $(INCLUDE)
+	@echo SFILES = $(SFILES)
+	@echo CFILES = $(CFILES)
+	@echo SFILENDIR = $(SFILENDIR)
+	@echo CFILENDIR = $(CFILENDIR)
+	@echo SOBJS = $(SOBJS)
+	@echo COBJS = $(COBJS)
