@@ -2,18 +2,15 @@
 
 void Key_Init(void)
 {
+    
     IOMUXC_SetPinMux(IOMUXC_UART1_CTS_B_GPIO1_IO18,0);
-
     IOMUXC_SetPinConfig(IOMUXC_UART1_CTS_B_GPIO1_IO18,0xF080);
-    GPIO1->GDIR &= ~(1<<18);
+    _gpio_pin_config_t config;
+    config.direction = kGPIO_DigitalInput;
+    config.outputLogic = 1;
+    GPIO_Init(GPIO1, 18, &config);
 }
 
-uint32_t GPIO_ReadPins(uint32_t num)
-{
-    uint32_t temp = 0;
-    temp = GPIO1->DR & num;
-    return temp;
-}
 
 uint8_t Key_GetNum(void)
 {

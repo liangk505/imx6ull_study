@@ -14,16 +14,46 @@ int main()
     beep_Init();
     Key_Init();
 
-    uint8_t beep_flag = 0;
+    volatile uint32_t i = 0;
+    uint8_t LED_Flag = 0;
+    uint8_t beep_Flag = 0;
     uint8_t KeyNum = 0;
+    beep_switch(beep_Flag);
     while(1)
     {
+        // LED_ON();
+        // delay(1000);
+        // LED_OFF();
+        // delay(1000);
+
+        i++;
+        if(i >= 500000)
+        {
+            i = 0;
+            LED_Flag = !LED_Flag;
+            if(LED_Flag == 1)
+            {
+                LED_ON();
+            }
+            else
+            {
+                LED_OFF();
+            }
+        }
 
         KeyNum = Key_GetNum();
         if(KeyNum == 1)
         {
-            beep_switch(!beep_flag);
-            beep_flag = !beep_flag;
+            beep_switch(beep_Flag);
+            beep_Flag = !beep_Flag;
+            // if(beep_Flag)
+            // {
+            //     LED_ON();
+            // }
+            // else
+            // {
+            //     LED_OFF();
+            // }
         }
 
     }
