@@ -12,7 +12,7 @@ void beep_switch(uint8_t status)
 {
     if(status == 1)
     {
-        GPIO5->DR &= ~(1<<1);
+        GPIO5->DR &= (0<<1);
     }
     if(status == 0)
     {

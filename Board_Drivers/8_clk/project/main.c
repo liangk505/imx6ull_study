@@ -9,10 +9,12 @@
 
 int main()
 {
-    Clock_Init();
+    imx6u_clkinit();
+    Clock_Enable();
     LED_Init();
     beep_Init();
     Key_Init();
+    
 
     volatile uint32_t i = 0;
     uint8_t LED_Flag = 0;
@@ -27,7 +29,7 @@ int main()
         // delay(1000);
 
         i++;
-        if(i >= 250000)
+        if(i >= 500000)
         {
             i = 0;
             LED_Flag = !LED_Flag;
@@ -44,8 +46,16 @@ int main()
         KeyNum = Key_GetNum();
         if(KeyNum == 1)
         {
-            beep_Flag = !beep_Flag;
             beep_switch(beep_Flag);
+            beep_Flag = !beep_Flag;
+            // if(beep_Flag)
+            // {
+            //     LED_ON();
+            // }
+            // else
+            // {
+            //     LED_OFF();
+            // }
         }
 
     }
