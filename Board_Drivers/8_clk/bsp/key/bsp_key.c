@@ -7,7 +7,6 @@ void Key_Init(void)
     IOMUXC_SetPinConfig(IOMUXC_UART1_CTS_B_GPIO1_IO18,0xF080);
     _gpio_pin_config_t config;
     config.direction = kGPIO_DigitalInput;
-    config.outputLogic = 1;
     GPIO_Init(GPIO1, 18, &config);
 }
 
@@ -15,12 +14,12 @@ void Key_Init(void)
 uint8_t Key_GetNum(void)
 {
     uint8_t Key_Num = 0;
-    if(( GPIO_ReadPins(1<<18) & (1<<18) )== 0)
+    if(( GPIO_ReadPins(GPIO1) & (1<<18) )== 0)
     {
         delay(20);
-        if(( GPIO_ReadPins(1<<18) & (1<<18) )== 0)
+        if(( GPIO_ReadPins(GPIO1) & (1<<18) )== 0)
         {
-            while(! (GPIO_ReadPins(1<<18) & (1<<18) ) );
+            while(! (GPIO_ReadPins(GPIO1) & (1<<18) ) );
             delay(20);
             Key_Num = 1;
         }
