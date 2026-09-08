@@ -1,12 +1,5 @@
 
 .global _start
-.global _bss_start
-_bss_start:
-    .word _bss_start
-
-.global _bss_end
-_bss_end:
-    .word _bss_end
 
 _start:
     ldr pc, =Reset_Handler
@@ -39,6 +32,13 @@ Reset_Handler:
     dsb
     isb
 #endif
+.global _bss_start
+_bss_start:
+    .word _bss_start
+
+.global _bss_end
+_bss_end:
+    .word _bss_end
     /*清除bss段 */
     ldr r0, _bss_start
     ldr r1, _bss_end

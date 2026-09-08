@@ -1,10 +1,6 @@
-#include "imx6u.h"
 #include "bsp_clk.h"
-#include "bsp_delay.h"
 #include "bsp_led.h"
-#include "bsp_beep.h"
-#include "bsp_key.h"
-#include "bsp_int.h"
+#include "bsp_exti.h"
 
 
 
@@ -16,38 +12,24 @@ int main()
     LED_Init();
     beep_Init();
     Key_Init();
+    Exti_Init();
     
 
-    volatile uint32_t i = 0;
     uint8_t LED_Flag = 0;
     uint8_t beep_Flag = 0;
-    uint8_t KeyNum = 0;
     beep_switch(beep_Flag);
     while(1)
     {
-
-        i++;
-        if(i >= 500000)
+        LED_Flag = !LED_Flag;
+        if(LED_Flag == 1)
         {
-            i = 0;
-            LED_Flag = !LED_Flag;
-            if(LED_Flag == 1)
-            {
-                LED_ON();
-            }
-            else
-            {
-                LED_OFF();
-            }
+            LED_ON();
         }
-
-        KeyNum = Key_GetNum();
-        if(KeyNum == 1)
+        else
         {
-            beep_switch(beep_Flag);
-            beep_Flag = !beep_Flag;
+            LED_OFF();
         }
-
+        delay(500);
     }
     return 0;
 }
