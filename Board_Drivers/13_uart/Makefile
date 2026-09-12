@@ -1,5 +1,5 @@
 CROSS_COMPILE ?= arm-linux-gnueabihf-
-TARGET ?= uart
+TARGET ?= printf
 CC := $(CROSS_COMPILE)gcc
 LD := $(CROSS_COMPILE)ld 
 OBJCOPY := $(CROSS_COMPILE)objcopy 
@@ -18,7 +18,8 @@ INCLUDIRS := imx6u \
 				bsp/int \
 				bsp/epit \
 				bsp/keyfilter \
-				bsp/uart
+				bsp/uart \
+				stdio/include
 				
 
 SRCDIRS := project \
@@ -32,7 +33,8 @@ SRCDIRS := project \
 			bsp/int \
 			bsp/epit \
 			bsp/keyfilter \
-			bsp/uart
+			bsp/uart \
+			stdio/lib
 			
 
 INCLUDE :=  $(patsubst %, -I %, $(INCLUDIRS))
@@ -58,10 +60,10 @@ $(TARGET).bin : $(OBJS)
 	$(OBJDUMP) -D -m arm $(TARGET).elf > $(TARGET).dis
 
 $(SOBJS) : obj/%.o : %.s
-	$(CC) -Wall -nostdlib -c -O2 $(INCLUDE) -o $@ $<
+	$(CC) -Wall -nostdlib -fno-builtin -c -O2 $(INCLUDE) -o $@ $<
 
 $(COBJS) : obj/%.o : %.c
-	$(CC) -Wall -nostdlib -c -O2 $(INCLUDE) -o $@ $<
+	$(CC) -Wall -nostdlib -Wa,-mimplicit-it=thumb -fno-builtin -c -O2 $(INCLUDE) -o $@ $<
 
 clean:
 	rm -rf $(TARGET).elf $(TARGET).bin $(TARGET).dis $(OBJS)

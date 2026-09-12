@@ -170,7 +170,7 @@ uint8_t UART1_ReceiveByte(void)
     return UART1->URXD;
 }
 
-void UART1_SendString(uint8_t *Array)
+void UART1_SendString(char *Array)
 {
     uint8_t i = 0;
     while(Array[i] != '\0')
@@ -183,4 +183,19 @@ void UART1_SendString(uint8_t *Array)
 void raise(int sig_nr)
 {
     
+}
+
+void putc (unsigned char __c)
+{
+    UART1_SendByte(__c);
+}
+
+unsigned char getc(void)
+{
+    return UART1_ReceiveByte();
+}
+
+void puts(char *p)
+{
+    UART1_SendString(p);
 }

@@ -11,4 +11,5 @@ void delay(volatile unsigned int n);
 void GPT1_Enable();
 void delay_us(uint32_t us);
 void delay_ms(uint32_t ms);
+void delay_Init(void);
 #endif // !__BSP_DELAY_H

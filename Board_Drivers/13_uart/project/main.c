@@ -19,13 +19,12 @@ int main()
     Keyfilter_Epit_Init();
     delay_Init();
     UART1_Init();
-
+    int a = 0,b = 0;
     while(1)
     {
-        UART1_SendString("请输入一个字符：\r\n");
-        uint8_t byte = UART1_ReceiveByte();
-        UART1_SendByte(byte);
-        UART1_SendString("\r\n");
+        printf("请输入两个整数：\r\n");
+        scanf("%d %d",&a,&b);
+        printf("两数和为：%d",a+b);
     }
     return 0;
 }
