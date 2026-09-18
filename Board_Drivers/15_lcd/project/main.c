@@ -21,7 +21,7 @@ int main()
     delay_Init();
     UART1_Init();
     LCD_Init();
-    
+    LCD_GPIO_Init();
     while(1)
     {
         

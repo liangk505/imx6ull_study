@@ -15,5 +15,6 @@
 
 unsigned short LCD_ReadID(void);
 void LCD_Init(void);
+void LCD_GPIO_Init(void);
 #endif 
 
