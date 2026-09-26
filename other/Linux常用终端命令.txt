@@ -1,0 +1,725 @@
+============================================================
+  Linux 常用终端命令大全（带注释）
+============================================================
+
+==================== 一、文件和目录操作 ====================
+
+ls                    # 列出当前目录下的文件和文件夹
+ls -l                 # 以长格式列出文件详细信息（权限、大小、时间等）
+ls -a                 # 列出所有文件，包括隐藏文件（以.开头的文件）
+ls -la                # 长格式列出所有文件（含隐藏文件）
+ls -lh                # 以人类可读的大小格式显示（如1K, 234M, 2G）
+ls -lt                # 按修改时间排序，最新的在前
+ls -ltr               # 按修改时间排序，最旧的在前
+ls -R                 # 递归列出所有子目录的内容
+
+pwd                   # 显示当前工作目录的完整路径（Print Working Directory）
+
+cd /path/to/dir       # 切换到指定目录
+cd ~                  # 切换到当前用户的家目录
+cd -                  # 切换到上一个工作目录
+cd ..                 # 切换到上级目录
+cd ../..              # 切换到上两级目录
+
+mkdir dirname         # 创建目录（Make Directory）
+mkdir -p a/b/c        # 递归创建多级目录（父目录不存在时自动创建）
+mkdir -m 755 dirname  # 创建目录并指定权限
+
+rmdir dirname         # 删除空目录
+rm -r dirname         # 递归删除目录及其所有内容（危险操作！）
+rm -rf dirname        # 强制递归删除，不提示确认（极度危险！）
+rm file.txt           # 删除文件
+rm -i file.txt        # 删除前逐一确认
+rm -f file.txt        # 强制删除文件，不提示
+
+cp source dest        # 复制文件
+cp -r src/ dest/      # 递归复制整个目录
+cp -i src dest        # 覆盖前询问确认
+cp -p src dest        # 保留文件的权限、时间戳等属性
+cp -a src/ dest/      # 归档复制（保留所有属性和链接）
+
+mv source dest        # 移动文件或重命名文件/目录
+mv -i src dest        # 覆盖前询问确认
+mv -f src dest        # 强制移动，不提示
+
+touch filename        # 创建空文件，或更新文件的访问/修改时间戳
+touch -t 202512312359 file.txt  # 设置文件的时间戳为指定时间
+
+cat file.txt          # 查看文件全部内容（适合小文件）
+cat -n file.txt       # 查看文件内容并显示行号
+cat file1 file2 > file3  # 合并多个文件
+
+tac file.txt          # 反向显示文件内容（从最后一行开始）
+
+more file.txt         # 分页查看文件内容（按空格翻页，按q退出）
+less file.txt         # 分页查看文件内容（支持上下滚动，更灵活）
+
+head file.txt         # 查看文件前10行
+head -n 20 file.txt   # 查看文件前20行
+head -c 100 file.txt  # 查看文件前100个字节
+
+tail file.txt         # 查看文件后10行
+tail -n 20 file.txt   # 查看文件后20行
+tail -f file.txt      # 实时追踪文件新增内容（常用于查看日志）
+tail -F file.txt      # 实时追踪文件，文件被删除重建后继续追踪
+
+ln -s /path/to/original linkname  # 创建软链接（符号链接，类似Windows快捷方式）
+ln /path/to/original linkname     # 创建硬链接（同一文件的不同入口）
+
+file filename         # 判断文件类型（文本、二进制、图片等）
+
+stat filename         # 显示文件或文件系统的详细状态信息
+
+==================== 二、文件查找和搜索 ====================
+
+find /path -name "*.txt"           # 按文件名查找
+find /path -type f -name "*.log"   # 查找指定类型的文件（f=文件, d=目录）
+find /path -type d -name "dir*"    # 查找目录
+find /path -size +100M             # 查找大于100MB的文件
+find /path -mtime -7               # 查找7天内修改过的文件
+find /path -mtime +30              # 查找30天前修改过的文件
+find /path -atime -1               # 查找1天内访问过的文件
+find /path -perm 755               # 查找权限为755的文件
+find /path -user username          # 查找属于指定用户的文件
+find /path -empty                  # 查找空文件和空目录
+find /path -name "*.log" -delete   # 查找并删除匹配的文件
+find /path -name "*.log" -exec rm {} \;  # 查找并对每个结果执行命令
+find /path -name "*.txt" | xargs grep "pattern"  # 查找文件并用xargs传递结果
+
+locate filename      # 快速查找文件（从数据库中查找，需要先运行updatedb）
+locate -i filename   # 不区分大小写查找
+updatedb             # 更新locate的文件数据库
+
+which command        # 显示命令的完整路径
+whereis command      # 显示命令的二进制文件、源码和man手册页的位置
+type command         # 显示命令的类型（内置命令、别名、外部命令等）
+
+==================== 三、文件内容搜索（grep系列）====================
+
+grep "pattern" file.txt            # 在文件中搜索指定模式
+grep -i "pattern" file.txt         # 不区分大小写搜索
+grep -v "pattern" file.txt         # 反向搜索（显示不匹配的行）
+grep -r "pattern" /path/           # 递归搜索目录中的所有文件
+grep -n "pattern" file.txt         # 显示匹配行的行号
+grep -c "pattern" file.txt         # 统计匹配行数
+grep -l "pattern" *.txt            # 只显示包含匹配的文件名
+grep -w "word" file.txt            # 精确匹配整个单词
+grep -A 3 "pattern" file.txt       # 显示匹配行及其后3行
+grep -B 3 "pattern" file.txt       # 显示匹配行及其前3行
+grep -C 3 "pattern" file.txt       # 显示匹配行及其前后各3行
+grep -E "pattern1|pattern2" file.txt  # 使用扩展正则表达式（等同于egrep）
+grep -o "pattern" file.txt         # 只输出匹配的部分
+
+egrep "pattern1|pattern2" file.txt # 扩展grep，支持更丰富的正则表达式
+fgrep "literal_string" file.txt    # 快速grep，不解析正则表达式
+
+==================== 四、文件权限管理 ====================
+
+chmod 755 file.txt    # 设置文件权限（rwxr-xr-x）
+chmod u+x script.sh   # 给文件所有者添加执行权限
+chmod g-w file.txt    # 移除组用户的写权限
+chmod o= file.txt     # 清除其他用户的所有权限
+chmod -R 755 dir/     # 递归修改目录下所有文件的权限
+
+# 权限数字含义：r=4, w=2, x=1
+# 777 = rwxrwxrwx (所有人可读写执行)
+# 755 = rwxr-xr-x (所有者全权限，组和其他人可读执行)
+# 644 = rw-r--r-- (所有者读写，组和其他人只读)
+# 700 = rwx------ (只有所有者有权限)
+
+chown user:group file.txt          # 修改文件的所有者和所属组
+chown -R user:group dir/           # 递归修改目录的所有者和所属组
+chown user file.txt                # 只修改文件所有者
+chown :group file.txt              # 只修改文件所属组
+
+chgrp groupname file.txt           # 修改文件所属组
+chgrp -R groupname dir/            # 递归修改目录所属组
+
+umask 022             # 设置默认文件权限掩码（新文件默认权限=666-umask）
+umask                 # 查看当前umask值
+
+==================== 五、用户和组管理 ====================
+
+whoami                # 显示当前登录用户名
+id                    # 显示当前用户的UID、GID及所属组
+id username           # 显示指定用户的信息
+
+who                   # 显示当前登录的所有用户
+w                     # 显示当前登录用户及其正在执行的任务
+last                  # 显示最近登录的用户记录
+lastb                 # 显示失败的登录尝试记录（需要root权限）
+
+su - username         # 切换到指定用户（- 表示加载该用户的环境变量）
+sudo command          # 以root权限执行命令
+sudo -i               # 切换到root用户
+sudo -u username cmd  # 以指定用户身份执行命令
+visudo                # 安全编辑/etc/sudoers文件
+
+useradd username                # 添加新用户
+useradd -m username             # 添加用户并创建家目录
+useradd -g groupname username   # 添加用户并指定主组
+useradd -G group1,group2 user   # 添加用户并指定附加组
+useradd -s /bin/bash username   # 添加用户并指定shell
+
+userdel username      # 删除用户（不删除家目录）
+userdel -r username   # 删除用户及其家目录和邮件
+
+usermod -aG group user         # 将用户添加到附加组
+usermod -s /bin/zsh user       # 修改用户的默认shell
+usermod -L username            # 锁定用户账户
+usermod -U username            # 解锁用户账户
+
+passwd                # 修改当前用户密码
+passwd username       # 修改指定用户密码（需要root权限）
+passwd -l username    # 锁定用户密码
+passwd -u username    # 解锁用户密码
+
+groupadd groupname    # 创建新组
+groupdel groupname    # 删除组
+
+==================== 六、进程管理 ====================
+
+ps                    # 显示当前shell的进程
+ps aux                # 显示系统中所有进程的详细信息
+ps -ef                # 显示所有进程的完整信息
+ps -eo pid,ppid,cmd,%mem,%cpu  # 自定义显示进程信息
+
+top                   # 实时显示进程动态（按q退出，按k输入PID杀进程）
+htop                  # top的增强版（界面更友好，需单独安装）
+
+pgrep process_name    # 根据进程名查找PID
+pgrep -l process_name # 查找并显示进程名和PID
+pgrep -u username     # 查找指定用户的进程
+
+pidof process_name    # 查找进程的PID
+
+kill PID              # 终止指定PID的进程（发送TERM信号）
+kill -9 PID           # 强制终止进程（发送KILL信号，不可被忽略）
+kill -15 PID          # 正常终止进程（默认信号）
+kill -l               # 列出所有信号
+
+killall process_name  # 根据进程名终止所有匹配的进程
+killall -9 pname      # 强制终止所有匹配进程
+
+pkill process_name    # 根据进程名终止进程（支持模式匹配）
+pkill -f pattern      # 根据完整命令行匹配并终止进程
+
+bg                    # 将暂停的后台任务放到后台继续运行
+fg                    # 将后台任务调到前台运行
+jobs                  # 显示当前shell的后台任务列表
+
+nohup command &       # 后台运行命令，不受终端关闭影响
+command &             # 将命令放到后台运行
+
+nice -n 10 command    # 以较低优先级运行命令（-20最高，19最低）
+renice -n 5 -p PID    # 修改运行中进程的优先级
+
+==================== 七、磁盘和存储管理 ====================
+
+df -h                 # 以人类可读格式显示磁盘分区使用情况
+df -i                 # 显示inode使用情况
+df -T                 # 显示文件系统类型
+
+du -sh /path/dir/     # 显示目录的总大小
+du -h --max-depth=1   # 显示当前目录下各子目录的大小
+du -sh *              # 显示当前目录下每个文件/目录的大小
+du -ah                # 显示所有文件和目录的大小
+
+fdisk -l              # 列出所有磁盘分区信息（需要root权限）
+lsblk                 # 列出所有块设备（磁盘、分区等）
+lsblk -f              # 列出块设备及文件系统类型
+
+mount /dev/sdb1 /mnt  # 挂载设备到指定目录
+mount -t ext4 /dev/sda1 /mnt  # 指定文件系统类型挂载
+mount -o loop file.iso /mnt   # 挂载ISO文件
+umount /mnt           # 卸载已挂载的设备
+umount -l /mnt        # 强制卸载（lazy unmount）
+
+mkfs.ext4 /dev/sdb1   # 格式化为ext4文件系统
+mkfs.xfs /dev/sdb1    # 格式化为xfs文件系统
+mkfs.vfat /dev/sdb1   # 格式化为FAT32文件系统
+
+fsck /dev/sda1        # 检查并修复文件系统（设备必须未挂载）
+
+dd if=/dev/sda of=/backup/disk.img bs=4M status=progress  # 磁盘/分区备份
+dd if=input.iso of=/dev/sdb bs=4M status=progress         # 写入ISO到USB
+
+==================== 八、压缩和解压缩 ====================
+
+# --- tar ---
+tar -cvf archive.tar dir/           # 创建tar归档（c=创建, v=详细, f=文件）
+tar -xvf archive.tar                # 解压tar归档
+tar -tvf archive.tar                # 查看tar归档内容不解压
+tar -czvf archive.tar.gz dir/       # 创建gzip压缩的tar归档
+tar -xzvf archive.tar.gz            # 解压.tar.gz文件
+tar -cjvf archive.tar.bz2 dir/      # 创建bzip2压缩的tar归档
+tar -xjvf archive.tar.bz2           # 解压.tar.bz2文件
+tar -cJvf archive.tar.xz dir/       # 创建xz压缩的tar归档
+tar -xJvf archive.tar.xz            # 解压.tar.xz文件
+
+# --- gzip ---
+gzip file.txt         # 压缩文件（生成file.txt.gz）
+gzip -d file.txt.gz   # 解压.gz文件
+gunzip file.txt.gz    # 解压.gz文件（同上）
+gzip -k file.txt      # 压缩但保留原文件
+
+# --- zip/unzip ---
+zip archive.zip file1 file2         # 创建zip压缩包
+zip -r archive.zip dir/             # 递归压缩目录
+unzip archive.zip                   # 解压zip文件
+unzip -l archive.zip                # 查看zip内容不解压
+
+# --- 其他 ---
+bzip2 file.txt        # bzip2压缩（生成.bz2文件，压缩率比gzip高）
+bunzip2 file.txt.bz2  # 解压.bz2文件
+xz file.txt           # xz压缩（高压缩率，生成.xz文件）
+unxz file.txt.xz      # 解压.xz文件
+
+==================== 九、网络相关 ====================
+
+ping google.com       # 测试网络连通性（按Ctrl+C停止）
+ping -c 4 google.com  # 发送指定数量的ping包
+ping -i 0.5 google.com # 设置ping间隔时间（秒）
+
+curl https://example.com           # 访问URL并输出内容
+curl -O https://example.com/file   # 下载文件（保持原名）
+curl -o name.txt url               # 下载文件并重命名
+curl -I https://example.com        # 只显示HTTP响应头
+curl -X POST -d "data" url         # 发送POST请求
+curl -L url                        # 跟随重定向
+curl -u user:pass url              # 带认证的请求
+
+wget https://example.com/file.txt  # 下载文件
+wget -O name.txt url               # 下载并重命名
+wget -c url                        # 断点续传下载
+wget -r -l 2 url                   # 递归下载（-l指定深度）
+wget -P /path url                  # 下载到指定目录
+
+ssh user@host         # SSH远程登录
+ssh -p 2222 user@host # 指定端口远程登录
+ssh -i key.pem user@host  # 使用密钥文件登录
+
+scp file.txt user@host:/path/          # 复制文件到远程主机
+scp -r dir/ user@host:/path/           # 递归复制目录到远程
+scp user@host:/path/file.txt ./        # 从远程复制到本地
+scp -P 2222 file.txt user@host:/path/  # 指定端口复制
+
+rsync -avz src/ dest/          # 同步文件（归档模式+压缩）
+rsync -avz -e "ssh -p 2222" src/ user@host:/dest/  # 通过SSH同步
+rsync -avz --delete src/ dest/ # 同步并删除目标多余文件
+rsync -avz --progress src/ dest/  # 显示传输进度
+
+netstat -tuln         # 查看监听端口（t=tcp, u=udp, l=监听, n=数字）
+netstat -an           # 查看所有连接和监听端口
+netstat -rn           # 查看路由表
+
+ss -tuln              # 查看监听端口（netstat的现代替代）
+ss -s                 # 显示套接字统计信息
+
+ip addr               # 显示网络接口信息（现代替代ifconfig）
+ip link               # 显示网络链路层信息
+ip route              # 显示路由表
+
+ifconfig              # 显示/配置网络接口（传统命令，部分系统需安装）
+ifconfig eth0 up      # 启用网络接口
+ifconfig eth0 down    # 停用网络接口
+
+nslookup domain.com   # 查询DNS解析（传统工具）
+dig domain.com        # DNS查询工具（功能更强大）
+dig +short domain.com # 简短输出DNS查询结果
+dig -x 8.8.8.8       # 反向DNS查询
+
+host domain.com       # DNS查询
+
+traceroute domain.com # 跟踪数据包路由路径
+traceroute -n domain.com  # 不解析主机名，更快
+
+nc -zv host port      # 测试端口是否开放（netcat）
+nc -l -p 8080         # 在8080端口监听
+
+nmap localhost        # 扫描主机开放端口（需安装）
+nmap -sV host         # 扫描端口并检测服务版本
+
+tcpdump -i eth0       # 抓取网络数据包（需要root权限）
+tcpdump -i eth0 port 80  # 只抓取80端口的数据包
+
+iptables -L           # 查看防火墙规则
+
+==================== 十、系统信息和监控 ====================
+
+uname -a              # 显示系统所有信息（内核版本、架构等）
+uname -r              # 显示内核版本号
+uname -m              # 显示机器硬件架构（如x86_64）
+
+cat /etc/os-release   # 查看操作系统发行版信息
+lsb_release -a        # 查看Linux发行版信息
+hostnamectl           # 查看/设置主机名
+
+hostname              # 显示主机名
+hostname -i           # 显示主机IP地址
+
+uptime                # 显示系统运行时间、负载和用户数
+
+date                  # 显示当前日期和时间
+date "+%Y-%m-%d %H:%M:%S"   # 自定义日期时间格式
+date -s "2025-12-31 23:59:59"  # 设置系统时间
+cal                   # 显示当前月日历
+cal 2025              # 显示指定年份的日历
+cal 12 2025           # 显示指定月份日历
+
+free -h               # 以人类可读格式显示内存使用情况
+free -m               # 以MB为单位显示内存
+free -s 2             # 每2秒刷新显示内存
+
+cat /proc/cpuinfo     # 查看CPU信息
+cat /proc/meminfo     # 查看内存详细信息
+lscpu                 # 显示CPU架构信息
+lscpu -p              # 以可解析格式显示
+lspci                 # 列出所有PCI设备
+lsusb                 # 列出所有USB设备
+lshw                  # 列出所有硬件信息（需root权限）
+lshw -short           # 简要列出硬件
+
+dmidecode -t memory   # 查看内存硬件信息（需root权限）
+dmidecode -t system   # 查看系统硬件信息
+
+vmstat 2 5            # 每2秒报告虚拟内存统计，共5次
+vmstat -s             # 显示内存统计摘要
+
+iostat -x 2           # 每2秒显示IO统计信息
+iostat -d 2           # 每2秒显示磁盘IO
+
+sar -u 2 5            # 每2秒采集CPU使用情况，共5次
+sar -r                # 显示内存使用历史
+sar -n DEV            # 显示网络设备统计
+
+dmesg                 # 显示内核环缓冲区消息（启动信息）
+dmesg | tail -20      # 查看最后20条内核消息
+dmesg -T              # 显示人类可读的时间戳
+dmesg -w              # 实时跟踪内核消息
+
+journalctl -xe        # 查看系统日志（systemd系统）
+journalctl -u nginx   # 查看指定服务的日志
+journalctl -f         # 实时跟踪日志
+journalctl --since "2025-01-01" --until "2025-01-02"  # 按时间范围查看
+
+lsmod                 # 列出已加载的内核模块
+modprobe module_name  # 加载内核模块
+modprobe -r module_name  # 移除内核模块
+
+sysctl -a             # 显示所有内核参数
+sysctl -w net.ipv4.ip_forward=1  # 临时修改内核参数
+
+==================== 十一、软件包管理 ====================
+
+# --- Debian/Ubuntu (apt/dpkg) ---
+apt update                      # 更新软件包索引
+apt upgrade                     # 升级所有可升级的软件包
+apt full-upgrade                # 升级软件包（必要时会删除旧包）
+apt install package_name        # 安装软件包
+apt install -y package_name     # 安装时不询问确认
+apt remove package_name         # 卸载软件包（保留配置文件）
+apt purge package_name          # 彻底卸载（包括配置文件）
+apt autoremove                  # 自动删除不再需要的依赖包
+apt search keyword              # 搜索软件包
+apt show package_name           # 显示软件包详细信息
+apt list --installed            # 列出已安装的软件包
+apt list --upgradable           # 列出可升级的软件包
+
+dpkg -i package.deb             # 安装.deb包
+dpkg -r package_name            # 卸载软件包
+dpkg -l                         # 列出所有已安装的包
+dpkg -L package_name            # 列出包安装的文件
+dpkg -S /path/to/file           # 查找文件属于哪个包
+
+# --- CentOS/RHEL/Fedora (yum/dnf) ---
+yum install package_name        # 安装软件包（旧版）
+yum update                      # 更新所有软件包
+yum remove package_name         # 卸载软件包
+yum search keyword              # 搜索软件包
+yum info package_name           # 查看软件包信息
+yum list installed              # 列出已安装的包
+
+dnf install package_name        # 安装软件包（新版，替代yum）
+dnf update                      # 更新软件包
+dnf remove package_name         # 卸载软件包
+dnf search keyword              # 搜索软件包
+
+rpm -ivh package.rpm            # 安装RPM包
+rpm -e package_name             # 卸载RPM包
+rpm -qa                         # 列出所有已安装的RPM包
+rpm -ql package_name            # 列出包安装的文件
+
+# --- Snap / Flatpak ---
+snap install package_name       # 安装snap包
+snap list                       # 列出已安装的snap包
+snap remove package_name        # 卸载snap包
+
+flatpak install package_name    # 安装flatpak包
+flatpak list                    # 列出已安装的flatpak包
+flatpak uninstall package_name  # 卸载flatpak包
+
+==================== 十二、Shell 操作和变量 ====================
+
+echo "Hello World"    # 输出文本
+echo $PATH            # 输出PATH环境变量
+echo $HOME            # 输出家目录路径
+echo $USER            # 输出当前用户名
+echo $SHELL           # 输出当前Shell路径
+
+export VAR=value      # 设置环境变量
+export PATH=$PATH:/new/path  # 追加路径到PATH
+unset VAR             # 删除环境变量
+
+env                   # 显示所有环境变量
+printenv              # 显示所有环境变量
+
+alias ll='ls -la'     # 创建命令别名
+alias                 # 查看所有别名
+unalias ll            # 删除别名
+
+history               # 显示命令历史
+history | grep "cmd"  # 搜索命令历史
+!number               # 执行历史记录中指定编号的命令
+!!                    # 执行上一条命令
+!$                    # 引用上一条命令的最后一个参数
+!*                    # 引用上一条命令的所有参数
+
+clear                 # 清屏（或用Ctrl+L快捷键）
+
+==================== 十三、文本处理 ====================
+
+sort file.txt         # 按行排序文件内容
+sort -r file.txt      # 反向排序
+sort -n file.txt      # 按数字排序
+sort -u file.txt      # 排序并去重
+sort -k 2 file.txt    # 按第2列排序
+sort -t ':' -k 3 file.txt  # 按冒号分隔的第3列排序
+
+uniq file.txt         # 去除重复行（需先排序）
+uniq -c file.txt      # 统计每行重复次数
+uniq -d file.txt      # 只显示重复的行
+uniq -u file.txt      # 只显示不重复的行
+
+wc file.txt           # 统计行数、单词数、字节数
+wc -l file.txt        # 只统计行数
+wc -w file.txt        # 只统计单词数
+wc -c file.txt        # 只统计字节数
+wc -m file.txt        # 只统计字符数
+
+cut -d':' -f1 /etc/passwd   # 按冒号分隔，取第1列
+cut -d',' -f1,3 file.csv    # 取第1和第3列
+cut -c1-5 file.txt          # 取每行的第1到5个字符
+
+tr 'a-z' 'A-Z' < file.txt   # 小写转大写
+tr -d '\r' < file.txt       # 删除回车符
+echo "a b c" | tr ' ' ','   # 替换空格为逗号
+
+sed 's/old/new/' file.txt   # 替换每行第一个匹配
+sed 's/old/new/g' file.txt  # 替换每行所有匹配
+sed 's/old/new/gI' file.txt # 不区分大小写替换
+sed -i 's/old/new/g' file.txt  # 直接在文件中替换
+sed '/pattern/d' file.txt   # 删除匹配的行
+sed -n '5,10p' file.txt     # 打印第5到10行
+sed '2a\new line' file.txt  # 在第2行后插入
+
+awk '{print $1}' file.txt   # 打印第1列
+awk '{print $1,$3}' file.txt  # 打印第1和第3列
+awk -F':' '{print $1}' file.txt  # 指定分隔符
+awk '{sum+=$1} END {print sum}' file.txt  # 计算第1列和
+awk '/pattern/' file.txt    # 打印匹配的行
+awk 'NR==5' file.txt        # 打印第5行
+awk 'NF>5' file.txt         # 打印字段数大于5的行
+
+diff file1.txt file2.txt    # 比较两个文件的差异
+diff -u file1 file2         # 统一格式显示差异（类似git diff）
+diff -r dir1/ dir2/         # 递归比较两个目录
+
+tee file.txt          # 从标准输入读取并同时写入文件和标准输出
+echo "test" | tee file.txt  # 写入并显示
+
+column -t file.txt    # 将内容格式化为表格对齐
+
+==================== 十四、I/O 重定向和管道 ====================
+
+command > file.txt          # 将标准输出重定向到文件（覆盖）
+command >> file.txt         # 将标准输出追加到文件
+command 2> error.txt        # 将标准错误重定向到文件
+command 2>&1                # 将标准错误重定向到标准输出
+command &> all.txt          # 将标准输出和错误都重定向到文件
+command < file.txt          # 将文件作为标准输入
+command < input.txt > output.txt  # 输入和输出同时重定向
+command1 | command2         # 管道：将command1的输出作为command2的输入
+command1 | tee file.txt     # 输出到文件和管道
+command > /dev/null 2>&1    # 静默执行，丢弃所有输出
+
+==================== 十五、计划任务 ====================
+
+crontab -e            # 编辑当前用户的crontab
+crontab -l            # 查看当前用户的crontab
+crontab -r            # 删除当前用户的crontab
+crontab -u username -e  # 编辑指定用户的crontab
+
+# crontab格式：分 时 日 月 周 命令
+# 0 2 * * * /script.sh       # 每天凌晨2点执行
+# */5 * * * * /script.sh     # 每5分钟执行
+# 0 9-17 * * 1-5 /script.sh  # 工作日9到17点每小时执行
+# 0 0 1 * * /script.sh       # 每月1号凌晨执行
+# @reboot /script.sh         # 系统启动时执行
+
+at now + 5 minutes    # 5分钟后执行命令（交互式）
+at 10:00 PM           # 今晚10点执行
+at 10:00 PM tomorrow  # 明天晚上10点执行
+at 10:00 Dec 31 2025  # 指定日期时间执行
+atq                   # 查看待执行的at任务
+atrm job_number       # 删除at任务
+
+==================== 十六、Shell脚本基础 ====================
+
+# 变量定义和使用
+NAME="Linux"          # 定义变量（等号两边不能有空格）
+echo $NAME            # 使用变量
+echo ${NAME}          # 使用变量（带花括号，更规范）
+readonly VAR=value    # 定义只读变量
+
+# 特殊变量
+$0    # 脚本名称
+$1-$9 # 脚本的第1到第9个参数
+$#    # 参数个数
+$*    # 所有参数（作为一个字符串）
+$@    # 所有参数（作为多个字符串）
+$?    # 上一条命令的退出状态码（0=成功）
+$$    # 当前shell的PID
+$!    # 最后一个后台进程的PID
+
+# 条件判断
+if [ condition ]; then
+    # 条件成立时执行
+elif [ condition ]; then
+    # 另一条件成立时执行
+else
+    # 条件不成立时执行
+fi
+
+# 文件测试
+[ -f file ]    # 是否为普通文件
+[ -d dir ]     # 是否为目录
+[ -e file ]    # 文件是否存在
+[ -r file ]    # 文件是否可读
+[ -w file ]    # 文件是否可写
+[ -x file ]    # 文件是否可执行
+[ -s file ]    # 文件是否非空
+[ -L file ]    # 是否为符号链接
+
+# 字符串比较
+[ "$a" = "$b" ]   # 字符串相等
+[ "$a" != "$b" ]  # 字符串不相等
+[ -z "$str" ]     # 字符串为空
+[ -n "$str" ]     # 字符串非空
+
+# 数值比较
+[ $a -eq $b ]  # 等于
+[ $a -ne $b ]  # 不等于
+[ $a -gt $b ]  # 大于
+[ $a -lt $b ]  # 小于
+[ $a -ge $b ]  # 大于等于
+[ $a -le $b ]  # 小于等于
+
+# 循环
+for i in 1 2 3 4 5; do
+    echo $i
+done
+
+for file in *.txt; do
+    echo $file
+done
+
+while [ condition ]; do
+    # 循环体
+done
+
+until [ condition ]; do
+    # 直到条件成立时退出循环
+done
+
+# case 语句
+case $VAR in
+    pattern1) command1 ;;
+    pattern2) command2 ;;
+    *) default_command ;;
+esac
+
+# 函数
+function_name() {
+    # 函数体
+    return 0
+}
+
+==================== 十七、Vim 常用命令 ====================
+
+# --- 模式切换 ---
+# i        # 进入插入模式（光标前）
+# a        # 进入插入模式（光标后）
+# o        # 在下一行进入插入模式
+# Esc      # 退出插入模式，回到普通模式
+# v        # 进入可视模式
+# V        # 进入可视行模式
+# :        # 进入命令模式
+# Ctrl+v   # 进入可视块模式
+
+# --- 移动 ---
+# h j k l  # 左 下 上 右移动
+# 0        # 移到行首
+# $        # 移到行尾
+# gg       # 移到文件开头
+# G        # 移到文件末尾
+# :n       # 跳到第n行
+# w        # 跳到下一个单词开头
+# b        # 跳到上一个单词开头
+# e        # 跳到单词末尾
+# Ctrl+f   # 向下翻页
+# Ctrl+b   # 向上翻页
+
+# --- 编辑 ---
+# x        # 删除光标处字符
+# dd       # 删除（剪切）当前行
+# yy       # 复制当前行
+# p        # 在光标后粘贴
+# P        # 在光标前粘贴
+# u        # 撤销
+# Ctrl+r   # 重做
+# .        # 重复上一次操作
+# >>       # 增加缩进
+# <<       # 减少缩进
+
+# --- 搜索和替换 ---
+# /pattern     # 向下搜索
+# ?pattern     # 向上搜索
+# n            # 下一个匹配
+# N            # 上一个匹配
+# :%s/old/new/g    # 全文替换
+# :%s/old/new/gc   # 全文替换（逐一确认）
+
+# --- 保存和退出 ---
+# :w        # 保存
+# :wq       # 保存并退出
+# :q        # 退出
+# :q!       # 强制退出不保存
+# ZZ        # 保存并退出（等同于:wq）
+# :w file   # 另存为
+
+============================================================
+  温馨提示：
+  1. 使用 rm -rf 和 dd 等命令时务必小心，操作不可逆
+  2. 遇到不熟悉的命令，使用 man command 查看帮助手册
+  3. 使用 command --help 可查看简要帮助信息
+  4. 按 Tab 键可以自动补全命令和文件名
+  5. 按 Ctrl+R 可以搜索命令历史
+  6. 按 Ctrl+C 终止正在运行的命令
+  7. 按 Ctrl+Z 将当前任务挂起到后台
+  8. 按 Ctrl+D 发送EOF（退出shell）
+  9. 按 Ctrl+L 清屏
+  10. 使用 && 可串联命令（前一个成功才执行后一个）
+  11. 使用 || 可串联命令（前一个失败才执行后一个）
+  12. 使用 ; 可串联命令（无论前一个是否成功都执行后一个）
+============================================================
