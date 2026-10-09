@@ -1,3 +1,7 @@
 uboot移植：
 1.在Configs文件下有NXP提供的各种板子的配置文件修改此配置文件为自己的开发板文件
 2.在include/configs下添加自己开发板的对应头文件，修改文件并裁剪uboot
+3.修改板级文件，如：LCD参数、网络配置；由于正点原子用的是SR8201F所以需要修改PHY的驱动，由于SR8201F就是PIN to PIN 替换RTL8201F的，所以可以直接用Realtek的相关驱动。将配置文件中的PHY改为CONFIG_PHY_REAL_TEK。没有用到74LV595，所以删掉相关驱动，由于PHY的复位引脚与官方不同，所以需要修改FEC相关iomux并完成复位
+
+Linux启动：
+1.环境变量bootcmd用于启动linux镜像，bootrargs用于给linux传递参数
